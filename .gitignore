@@ -1,0 +1,6 @@
+venv
+caras-dataset
+sentimientos-dataset
+*.xml
+*.mp4
+*.rar
