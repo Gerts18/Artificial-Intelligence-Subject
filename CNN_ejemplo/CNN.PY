@@ -135,3 +135,21 @@ sport_model.compile(
     optimizer=keras.optimizers.Adagrad(learning_rate=INIT_LR),
     metrics=['accuracy']
 )
+
+# Entrenar el modelo
+sport_model_train = sport_model.fit(
+    train_X, train_label,
+    batch_size=batch_size,
+    epochs=epochs,
+    verbose=1,
+    validation_data=(valid_X, valid_label)
+)
+
+# Evaluar el modelo en el conjunto de prueba
+test_eval = sport_model.evaluate(test_X, test_Y_one_hot, verbose=1)
+print('Test loss:', test_eval[0])
+print('Test accuracy:', test_eval[1])
+
+# Guardar el modelo
+sport_model.save("sports_mnist_2.h5")
+print('\nModelo guardado como sports_mnist_2.h5')

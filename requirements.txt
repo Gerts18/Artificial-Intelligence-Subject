@@ -1,1 +1,6 @@
 opencv-contrib-python
+matplotlib
+scikit-learn
+keras
+tensorflow
+mediapipe
