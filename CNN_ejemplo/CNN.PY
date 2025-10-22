@@ -12,7 +12,7 @@ import keras
 # PASO 1: Cargar las imágenes de sportsimages
 # ----------------------------------------------------------------
 
-dirname = os.path.join(os.getcwd(), 'sportimages')
+dirname = os.path.join(os.getcwd(), 'CNN_ejemplo\sportimages')
 imgpath = dirname + os.sep
 
 images = []
@@ -84,7 +84,7 @@ print('Output classes : ', classes)
 # PASO 3: Dividir y preprocesar los datos 
 # ----------------------------------------------------------------
 # Mezclar todo y crear los grupos de entrenamiento y testing
-train_X, test_X, train_Y, test_Y = train_test_split(X, y, test_size=0.2)
+train_X, test_X, train_Y, test_Y = train_test_split(X, y, test_size=0.2, stratify=y, random_state=13)
 print('\nTraining data shape : ', train_X.shape, train_Y.shape)
 print('Testing data shape : ', test_X.shape, test_Y.shape)
 
@@ -94,9 +94,9 @@ test_X = test_X.astype('float32')
 train_X = train_X / 255.
 test_X = test_X / 255.
 
-# Convertir las etiquetas a formato one-hot encoding
-train_Y_one_hot = to_categorical(train_Y)
-test_Y_one_hot = to_categorical(test_Y)
+# Convertir las etiquetas a formato one-hot encoding (forzando el mismo num. de clases)
+train_Y_one_hot = to_categorical(train_Y, num_classes=nClasses)
+test_Y_one_hot = to_categorical(test_Y, num_classes=nClasses)
 
 # Mostrar el cambio
 print('\nOriginal label:', train_Y[0])
