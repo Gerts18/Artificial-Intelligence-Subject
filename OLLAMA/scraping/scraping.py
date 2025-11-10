@@ -273,27 +273,42 @@ class FacebookScraper:
         print(f"Datos guardados en: {filepath}")
     
     def save_multiple_posts_to_json(self, posts_data, filename='posts_data.json'):
-        """Guarda múltiples posts en un archivo JSON"""
+        """Guarda múltiples posts en un archivo JSON (agrega a los existentes)"""
         filepath = f'OLLAMA//scraping//{filename}'
         
-        # Crea un objeto con metadatos
-        output_data = {
-            "total_posts": len(posts_data),
-            "fecha_extraccion": time.strftime("%Y-%m-%d %H:%M:%S"),
-            "posts": posts_data
+        # Intenta cargar datos existentes
+        existing_data = {
+            "total_posts": 0,
+            "fecha_ultima_actualizacion": "",
+            "posts": []
         }
         
+        if os.path.exists(filepath):
+            try:
+                with open(filepath, 'r', encoding='utf-8') as f:
+                    existing_data = json.load(f)
+                print(f"Se encontraron {len(existing_data['posts'])} posts existentes")
+            except Exception as e:
+                print(f"No se pudo leer el archivo existente: {e}")
+        
+        # Agrega los nuevos posts a los existentes
+        existing_data['posts'].extend(posts_data)
+        existing_data['total_posts'] = len(existing_data['posts'])
+        existing_data['fecha_ultima_actualizacion'] = time.strftime("%Y-%m-%d %H:%M:%S")
+        
+        # Guarda todo de nuevo
         with open(filepath, 'w', encoding='utf-8') as f:
-            json.dump(output_data, f, ensure_ascii=False, indent=4)
+            json.dump(existing_data, f, ensure_ascii=False, indent=4)
         
         print(f"\n{'='*60}")
         print(f"Datos guardados en: {filepath}")
-        print(f"Total de posts extraídos: {len(posts_data)}")
+        print(f"Posts nuevos agregados: {len(posts_data)}")
+        print(f"Total de posts en el archivo: {existing_data['total_posts']}")
         
-        # Muestra resumen de comentarios por post
+        # Muestra resumen de comentarios por post nuevo
         for idx, post in enumerate(posts_data, 1):
             num_comentarios = len(post.get('comentarios', []))
-            print(f"Post {idx}: {num_comentarios} comentarios")
+            print(f"Nuevo post {idx}: {num_comentarios} comentarios")
         print(f"{'='*60}")
     
     def close(self):
@@ -308,15 +323,8 @@ def main():
     try:
         # CONFIGURACIÓN - Lista de URLs de posts a scrapear
         POST_URLS = [
-            'https://www.facebook.com/share/p/1BnRzgsvi6/',
-            'https://www.facebook.com/share/p/1D4M5mZrTN/',
-            'https://www.facebook.com/share/p/1C11gkMqqw/',
-            'https://www.facebook.com/share/p/1APcohmAar/',
-            'https://www.facebook.com/share/p/1BLTnjAyYH/',
-            'https://www.facebook.com/share/p/17eC2i2J8J/',
-            'https://www.facebook.com/share/p/1PhnXTCEqi/',
-            'https://www.facebook.com/share/p/1Ceg5sTq7s/',
-            'https://www.facebook.com/share/p/1Bjy3pva2K/'
+            'https://www.facebook.com/share/p/17oHjXQoSb/'
+            
         ]
         
         print(f"Se procesarán {len(POST_URLS)} posts")
