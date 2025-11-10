@@ -232,12 +232,69 @@ class FacebookScraper:
         
         return post_data
     
+    def extract_multiple_posts(self, post_urls):
+        """Extrae datos de múltiples posts"""
+        all_posts_data = []
+        total_posts = len(post_urls)
+        
+        for idx, post_url in enumerate(post_urls, 1):
+            print(f"\n{'='*60}")
+            print(f"Procesando post {idx}/{total_posts}")
+            print(f"{'='*60}")
+            
+            try:
+                post_data = self.extract_post_data(post_url)
+                all_posts_data.append(post_data)
+                
+                # Espera un poco entre posts para no sobrecargar
+                if idx < total_posts:
+                    print(f"\nEsperando antes del siguiente post...")
+                    time.sleep(3)
+                    
+            except Exception as e:
+                print(f"Error al procesar el post {post_url}: {e}")
+                # Agrega un post con error para mantener el registro
+                all_posts_data.append({
+                    "url": post_url,
+                    "error": str(e),
+                    "nombre_pagina": "",
+                    "fecha": "",
+                    "descripcion": "",
+                    "comentarios": []
+                })
+        
+        return all_posts_data
+    
     def save_to_json(self, data, filename='post_data.json'):
         """Guarda los datos en un archivo JSON"""
         filepath = f'OLLAMA//scraping//{filename}'
         with open(filepath, 'w', encoding='utf-8') as f:
             json.dump(data, f, ensure_ascii=False, indent=4)
         print(f"Datos guardados en: {filepath}")
+    
+    def save_multiple_posts_to_json(self, posts_data, filename='posts_data.json'):
+        """Guarda múltiples posts en un archivo JSON"""
+        filepath = f'OLLAMA//scraping//{filename}'
+        
+        # Crea un objeto con metadatos
+        output_data = {
+            "total_posts": len(posts_data),
+            "fecha_extraccion": time.strftime("%Y-%m-%d %H:%M:%S"),
+            "posts": posts_data
+        }
+        
+        with open(filepath, 'w', encoding='utf-8') as f:
+            json.dump(output_data, f, ensure_ascii=False, indent=4)
+        
+        print(f"\n{'='*60}")
+        print(f"Datos guardados en: {filepath}")
+        print(f"Total de posts extraídos: {len(posts_data)}")
+        
+        # Muestra resumen de comentarios por post
+        for idx, post in enumerate(posts_data, 1):
+            num_comentarios = len(post.get('comentarios', []))
+            print(f"Post {idx}: {num_comentarios} comentarios")
+        print(f"{'='*60}")
     
     def close(self):
         """Cierra el navegador"""
@@ -249,20 +306,31 @@ def main():
     scraper = FacebookScraper()
     
     try:
-        # CONFIGURACIÓN
-        POST_URL = 'https://www.facebook.com/share/p/1D4M5mZrTN/'  # URL del post a scrapear
+        # CONFIGURACIÓN - Lista de URLs de posts a scrapear
+        POST_URLS = [
+            'https://www.facebook.com/share/p/1BnRzgsvi6/',
+            'https://www.facebook.com/share/p/1D4M5mZrTN/',
+            'https://www.facebook.com/share/p/1C11gkMqqw/',
+            'https://www.facebook.com/share/p/1APcohmAar/',
+            'https://www.facebook.com/share/p/1BLTnjAyYH/',
+            'https://www.facebook.com/share/p/17eC2i2J8J/',
+            'https://www.facebook.com/share/p/1PhnXTCEqi/',
+            'https://www.facebook.com/share/p/1Ceg5sTq7s/',
+            'https://www.facebook.com/share/p/1Bjy3pva2K/'
+        ]
         
-        # Extrae datos del post
-        post_data = scraper.extract_post_data(POST_URL)
+        print(f"Se procesarán {len(POST_URLS)} posts")
         
-        # Guarda los datos en JSON
-        scraper.save_to_json(post_data)
+        # Extrae datos de todos los posts
+        all_posts_data = scraper.extract_multiple_posts(POST_URLS)
         
-        print("\n=== DATOS EXTRAÍDOS ===")
-        #print(json.dumps(post_data, ensure_ascii=False, indent=2))
+        # Guarda todos los datos en un JSON
+        scraper.save_multiple_posts_to_json(all_posts_data)
+        
+        print("\n=== EXTRACCIÓN COMPLETADA ===")
         
     except Exception as e:
-        print(f"Error: {e}")
+        print(f"Error general: {e}")
     
     finally:
         input("Presiona Enter para cerrar el navegador...")
