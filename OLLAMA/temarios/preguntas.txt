@@ -1,0 +1,11 @@
+1. Basado en los temas de este temario ¿Qué materias y conceptos específicos de la carrera son prerrequisitos fundamentales para comprenderlo?
+
+2. De esos prerrequisitos, ¿cuáles son los 3 conceptos específicos que los estudiantes más deberían repasar antes de iniciar el curso?
+
+3. Para los temas de Redes Neuronales ¿cuáles son los lenguajes de programación y las bibliotecas y/o frameworks más demandados por la industria actualmente (en 2024/2025)
+
+4. Analizando el temario completo, ¿cuáles son los 2-3 temas que actualmente se consideran los de más rápida evolución?
+
+5. Para un estudiante buscando crear un portafolio profesional, ¿qué tipo de proyecto final (basado en este temario) sería más impactante para reclutadores de empresas de tecnología en el último año?
+
+6. Excelente. Ahora, basado en toda la información anterior, genera la lista final de recomendaciones para un estudiante de Ingeniería en Sistemas del Tec de Morelia, estructurada para maximizar su desempeño en la materia y su preparación profesional.

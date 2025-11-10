@@ -113,8 +113,8 @@ print(train_X.shape, valid_X.shape, train_label.shape, valid_label.shape)
 # ----------------------------------------------------------------
 
 INIT_LR = 1e-3
-epochs = 6
-batch_size = 64
+epochs = 6 # Afinar los pesos sinpticos 
+batch_size = 64  
 
 sport_model = Sequential()
 sport_model.add(Conv2D(32, kernel_size=(3, 3), activation='linear', padding='same', input_shape=(21, 28, 3)))
