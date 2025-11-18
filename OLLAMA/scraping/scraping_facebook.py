@@ -265,14 +265,14 @@ class FacebookScraper:
         
         return all_posts_data
     
-    def save_to_json(self, data, filename='post_data.json'):
+    def save_to_json(self, data, filename='post_data_fb.json'):
         """Guarda los datos en un archivo JSON"""
         filepath = f'OLLAMA//scraping//{filename}'
         with open(filepath, 'w', encoding='utf-8') as f:
             json.dump(data, f, ensure_ascii=False, indent=4)
         print(f"Datos guardados en: {filepath}")
     
-    def save_multiple_posts_to_json(self, posts_data, filename='posts_data.json'):
+    def save_multiple_posts_to_json(self, posts_data, filename='post_data_fb.json'):
         """Guarda múltiples posts en un archivo JSON (agrega a los existentes)"""
         filepath = f'OLLAMA//scraping//{filename}'
         

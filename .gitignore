@@ -1,6 +1,7 @@
 venv
 caras-dataset
 sentimientos-dataset
+animals-dataset
 *.xml
 *.mp4
 *.rar

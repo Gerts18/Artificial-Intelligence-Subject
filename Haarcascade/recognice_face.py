@@ -3,8 +3,8 @@ import os
 
 faceRecognizer = cv.face.EigenFaceRecognizer_create()
 faceRecognizer.read('Haarcascade\Eigenface-rostro.xml')
-#faces =['dario', 'emi', 'ger', 'korean', 'mark']
-faces =['angry', 'happy', 'sad']
+faces =['dario', 'emi', 'ger', 'korean', 'mark']
+#faces =['angry', 'happy', 'sad']
 
 # Agregar verificación de cámara
 cap = cv.VideoCapture(0)
