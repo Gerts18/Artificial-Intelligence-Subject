@@ -6,6 +6,10 @@ from pathlib import Path
 # IMPORTANT: Process the CSV in chunks to avoid memory issues
 CHUNK_SIZE = 100000  # Process 100k rows at a time
 
+# CSV file paths - Change these to your file locations
+OBSERVATIONS_CSV = r"D:\observations.csv.gz"
+PHOTOS_CSV = r"D:\photos.csv.gz"
+
 print("="*80)
 print("DOWNLOAD PHOTOS BY TAXON ID")
 print("="*80)
@@ -25,7 +29,7 @@ def find_observations_by_taxon(taxon_id, max_results=100):
     results = []
     chunk_num = 0
     
-    for chunk in pd.read_csv('observations.csv', sep='\t', chunksize=CHUNK_SIZE):
+    for chunk in pd.read_csv(OBSERVATIONS_CSV, sep='\t', chunksize=CHUNK_SIZE):
         chunk_num += 1
         print(f"Scanning observations chunk {chunk_num}... (found {len(results)} so far)", end='\r')
         
@@ -60,7 +64,7 @@ def find_photos_by_observation_uuids(observation_uuids):
     chunk_num = 0
     found_uuids = set()
     
-    for chunk in pd.read_csv('photos.csv', sep='\t', chunksize=CHUNK_SIZE):
+    for chunk in pd.read_csv(PHOTOS_CSV, sep='\t', chunksize=CHUNK_SIZE):
         chunk_num += 1
         print(f"Scanning photos chunk {chunk_num}... (found {len(results)} photos for {len(found_uuids)} observations)", end='\r')
         
@@ -212,10 +216,10 @@ def download_photos_by_taxon(taxon_id, max_observations=100, photo_size='medium'
 if __name__ == "__main__":
   
     
-    TAXON_ID = 47336  # Change this to your desired taxon
-    MAX_OBSERVATIONS = 3500  # Maximum number of observations to find
+    TAXON_ID = 39532  # Change this to your desired taxon
+    MAX_OBSERVATIONS = 6500  # Maximum number of observations to find
     PHOTO_SIZE = 'medium'
-    OUTPUT_DIR = 'Haarcascade//animals-dataset//perro' 
+    OUTPUT_DIR = 'Haarcascade//animals-dataset//tortugas' 
     
     download_photos_by_taxon(
         taxon_id=TAXON_ID,

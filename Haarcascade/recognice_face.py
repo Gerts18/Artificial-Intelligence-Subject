@@ -1,10 +1,20 @@
 import cv2 as cv
 import os 
 
+# Obtener el directorio actual del script
+script_dir = os.path.dirname(os.path.abspath(__file__))
+rostroModelPath = os.path.join(script_dir, 'Eigenface-rostro.xml')
+sentimientosModelPath = os.path.join(script_dir, 'Eigenface-sentimientos.xml')
+
+# Verificar que el archivo existe
+if not os.path.exists(sentimientosModelPath):
+    print(f"Error: El archivo {sentimientosModelPath} no existe")
+    exit()
+
 faceRecognizer = cv.face.EigenFaceRecognizer_create()
-faceRecognizer.read('Haarcascade\Eigenface-rostro.xml')
-faces =['dario', 'emi', 'ger', 'korean', 'mark']
-#faces =['angry', 'happy', 'sad']
+faceRecognizer.read(sentimientosModelPath)
+#faces =['dario', 'emi', 'ger', 'korean', 'mark'] # Para el modelo de rostro
+faces =['angry', 'happy', 'sad'] # para el modelo de sentimientos
 
 # Agregar verificación de cámara
 cap = cv.VideoCapture(0)

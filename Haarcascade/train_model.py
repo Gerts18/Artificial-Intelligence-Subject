@@ -1,7 +1,7 @@
 import cv2 as cv 
 import numpy as np 
 import os
-dataSet = 'C:\\Users\\germa\\Documents\\TEC 9\\IA\\OPENCV\\Haarcascade\\sentimientos-dataset'
+dataSet = 'Haarcascade//sentimientos-dataset'
 faces  = os.listdir(dataSet)
 print(faces)
 
@@ -12,7 +12,9 @@ for face in faces:
     facePath = dataSet+'/'+face
     for faceName in os.listdir(facePath):
         labels.append(label)
-        facesData.append(cv.imread(facePath+'/'+faceName,0))
+        img = cv.imread(facePath+'/'+faceName, 0)
+        img = cv.resize(img, (100, 100))  # Asegurar tamaño uniforme
+        facesData.append(img)
     label = label + 1
 print(np.count_nonzero(np.array(labels)==0)) 
 
