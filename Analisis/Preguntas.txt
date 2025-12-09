@@ -1,0 +1,95 @@
+                           ━━━━━━━━━━━━━━━━━
+                            PREGUNTAS BOOTS
+
+                            Eduardo Alcaraz
+                           ━━━━━━━━━━━━━━━━━
+
+
+Índice
+──────
+
+
+
+
+1. ¿Cuál es la proporción exacta de registros sobre "Generacion Z"
+   frente a "Frankenstein" en el dataset (porcentaje de cada categoría)?
+
+2. Sin incluir los registros de El País, identifique los tres medios de
+   comunicación que tienen la mayor cantidad de registros.
+
+3. Determine cuál fue el día de mayor actividad noticiosa (mayor número
+   de registros publicados) en todo el dataset y cuántos registros se
+   publicaron ese día.
+
+4. Para la categoría "Frankenstein", calcule cuántos registros tienen
+   una fecha de publicación anterior al 7 de noviembre de 2025.
+
+5. Considerando solo los registros donde el Medio es El Financiero,
+   muestre el conteo de registros para cada categoría ("Generacion Z" y
+   "Frankenstein").
+
+6. Cree un string combinado con el texto de las columnas Título y
+   Resumen solo para "Generacion Z". Muestre las cinco palabras clave
+   más frecuentes (después de eliminar stopwords comunes en español).
+
+7. Calcule cuántos registros de "Frankenstein" mencionan términos
+   relacionados con la producción visual (busque "maquillaje",
+   "vestuario", "diseño" o "estética") en su Resumen o
+   Comentario_Reaccion.
+
+8. Encuentre la diferencia neta entre: a) el número de veces que se
+   menciona la palabra "dolor" o "tragedia" en los comentarios de
+   Frankenstein, y b) el número de veces que se menciona "esperanza" en
+   los comentarios de "Generacion Z".
+
+9. Considerando ambas categorías, determine el número total de registros
+   que mencionan específicamente la plataforma "TikTok" en cualquier
+   columna de texto.
+
+10. Calcule el número total de menciones de los actores (busque las
+    strings "[Actor 1]", "[Actor 2]", "[Actor 3]", "[Actor 4]") en todas
+    las columnas de texto combinadas.
+
+11. Identifique qué medio de comunicación tiene el Tono Promedio más
+    bajo (más negativo) en la categoría "Generacion Z" (asumiendo que ya
+    se calculó la columna Tono_Sentimiento).
+
+12. Para los registros de "Frankenstein", compare el Tono Promedio de
+    aquellos que mencionan explícitamente a Guillermo del Toro (GDT) en
+    el Comentario_Reaccion con el Tono Promedio de aquellos que no lo
+    mencionan.
+
+13. Para los registros de "Generacion Z", determine qué plataforma es
+    más mencionada: Twitter/X o YouTube. Muestre el conteo de menciones
+    para cada una.
+
+14. Filtre los registros de "Frankenstein" que mencionan el término
+    "Venecia". De este subconjunto, muestre el Tono Promedio para
+    evaluar si el reconocimiento en festivales se asocia a un tono más
+    positivo.
+
+15. Calcule cuántos registros de "Generacion Z" cumplen simultáneamente
+    las siguientes condiciones: el Medio es El País Y el Resumen
+    menciona la palabra "gobierno".
+
+16. Utilizando la columna Tono_Sentimiento y los resultados del conteo
+    de palabras clave, sintetice y argumente por qué la cobertura
+    simulada de "Frankenstein" es, en promedio, más positiva que la de
+    "Generacion Z".
+
+17. Con base en el día de mayor actividad, filtre todos los registros de
+    ese día. Usando el Título y Resumen, sintetice el evento clave o
+    confrontación que impulsó esa cobertura.
+
+18. Filtre y analice las citas o resúmenes que se atribuyen a Guillermo
+    del Toro. Sintetice en una sola frase su enfoque principal sobre el
+    mensaje de la historia de Frankenstein.
+
+19. Filtre los registros que mencionan "desinformación", "bots" o
+    "infiltrar". Identifique y enumere las entidades o grupos que son
+    acusados directamente de estos actos en el contexto de las protestas
+    de la Generación Z.
+
+20. Escriba y ejecute el código Python/Pandas necesario para encontrar
+    el número de registros de "Frankenstein" donde el
+    Comentario_Reaccion incluye la frase "obra maestra" o "clásico".
