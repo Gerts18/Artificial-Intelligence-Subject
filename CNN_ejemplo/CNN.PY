@@ -5,7 +5,7 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 from keras.utils import to_categorical
 from keras.models import Sequential
-from keras.layers import Conv2D, MaxPooling2D, Dropout, Flatten, Dense, LeakyReLU
+from keras.layers import Conv2D, MaxPooling2D, Dropout, Flatten, Dense, LeakyReLU, Input
 from keras.callbacks import EarlyStopping
 import keras
 
@@ -133,35 +133,38 @@ print(train_X.shape, valid_X.shape, train_label.shape, valid_label.shape)
 # ----------------------------------------------------------------
 
 INIT_LR = 1e-3
-epochs = 35 # Afinar los pesos sinpticos 
+epochs = 65 # Afinar los pesos sinpticos 
 batch_size = 64  
 
-sport_model = Sequential()
+sport_model = Sequential([
+    # Usar Input como primera capa en lugar de input_shape
+    Input(shape=(64, 64, 3)),
+    
+    # Primera capa: 64x64x3 -> 32x32x32
+    Conv2D(32, kernel_size=(3, 3), activation='linear', padding='same'),
+    LeakyReLU(negative_slope=0.1),  # Cambiar alpha por negative_slope
+    MaxPooling2D((2, 2), padding='same'),
+    Dropout(0.25),
 
-# Primera capa: 64x64x3 -> 32x32x32
-sport_model.add(Conv2D(32, kernel_size=(3, 3), activation='linear', padding='same', input_shape=(64, 64, 3)))
-sport_model.add(LeakyReLU(alpha=0.1))
-sport_model.add(MaxPooling2D((2, 2), padding='same'))
-sport_model.add(Dropout(0.25))
+    # Segunda capa: 32x32x32 -> 16x16x64
+    Conv2D(64, kernel_size=(3, 3), activation='linear', padding='same'),
+    LeakyReLU(negative_slope=0.1),
+    MaxPooling2D((2, 2), padding='same'),
+    Dropout(0.25),
 
-# Segunda capa: 32x32x32 -> 16x16x64
-sport_model.add(Conv2D(64, kernel_size=(3, 3), activation='linear', padding='same'))
-sport_model.add(LeakyReLU(alpha=0.1))
-sport_model.add(MaxPooling2D((2, 2), padding='same'))
-sport_model.add(Dropout(0.25))
+    # Tercera capa: 16x16x64 -> 8x8x128
+    Conv2D(128, kernel_size=(3, 3), activation='linear', padding='same'),
+    LeakyReLU(negative_slope=0.1),
+    MaxPooling2D((2, 2), padding='same'),
+    Dropout(0.25),
 
-# Tercera capa: 16x16x64 -> 8x8x128
-sport_model.add(Conv2D(128, kernel_size=(3, 3), activation='linear', padding='same'))
-sport_model.add(LeakyReLU(alpha=0.1))
-sport_model.add(MaxPooling2D((2, 2), padding='same'))
-sport_model.add(Dropout(0.25))
-
-# Aplanar y capas densas
-sport_model.add(Flatten())  # 8x8x128 = 8192 valores
-sport_model.add(Dense(128, activation='linear'))
-sport_model.add(LeakyReLU(alpha=0.1))
-sport_model.add(Dropout(0.5))
-sport_model.add(Dense(nClasses, activation='softmax'))
+    # Aplanar y capas densas
+    Flatten(),
+    Dense(128, activation='linear'),
+    LeakyReLU(negative_slope=0.1),
+    Dropout(0.5),
+    Dense(nClasses, activation='softmax')
+])
 
 sport_model.summary()
 
@@ -193,6 +196,6 @@ test_eval = sport_model.evaluate(test_X, test_Y_one_hot, verbose=1)
 print('Test loss:', test_eval[0])
 print('Test accuracy:', test_eval[1])
 
-# Guardar el modelo
-sport_model.save("recognice_animals.h5")
-print('\nModelo guardado como recognice_animals.h5')
+# Guardar el modelo con formato .keras
+sport_model.save("recognice_animals.keras")  # Cambiar extensión
+print('\nModelo guardado como recognice_animals.keras')

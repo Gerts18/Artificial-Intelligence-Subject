@@ -4,14 +4,14 @@ from keras.models import load_model
 import matplotlib.pyplot as plt
 
 # Load trained model
-model = load_model("recognice_animals.h5")
+model = load_model("animal_classifier_optimized.h5")  # Cambiar extensión
 
 # Labels (classes in the same order you trained them)
 labels = ["catarina", "gato", "hormiga","perro","tortuga"] 
 
 # Target CNN input size
-target_w = 64
-target_h = 64
+target_w = 128
+target_h = 128
 
 def preprocess_image(img_path):
     img = cv2.imread(img_path)
@@ -42,7 +42,7 @@ def preprocess_image(img_path):
     return padded
 
 # ---- Test ----
-img_path = "CNN_ejemplo//test-animals//gato2.jpeg"
+img_path = "CNN_ejemplo\\test-animals\\hormiga3.jpg"
 
 X = preprocess_image(img_path)
 
