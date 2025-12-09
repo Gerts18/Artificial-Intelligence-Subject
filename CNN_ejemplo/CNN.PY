@@ -6,13 +6,33 @@ from sklearn.model_selection import train_test_split
 from keras.utils import to_categorical
 from keras.models import Sequential
 from keras.layers import Conv2D, MaxPooling2D, Dropout, Flatten, Dense, LeakyReLU
+from keras.callbacks import EarlyStopping
 import keras
 
+"""
+Una CNN guarda los conocimientos en la matriz de convolucion, generalmente al inicio tengo 32 filtros/kernel de convolucion para la primer capa, despues 64 y asi dependiendo del tamaño de la imagen.
+
+RAG vs Fine-tunning
+RAG es cuando solo se va a usar la informacion para que el modelo haga analisis atraves del corpus, para buscar informacion.
+Finetunning, cuando quieres aplicarle estilo y forma de responder propio al modelo.
+
+Lo que se busca al aplicar filtros/max pulling es reducir los pesos sinapticos y su dimensionalidad extrayendo la mayor cantidad de caracteristicas de los datos.
+
+Con pregunta/respuesta le estamos dando ejemplos de como deberia responder el modelo. 
+
+Soft-max sirve para diferenciar las clases que estoy viendo. A traves de softmax obtengo la probabilidad de que mi imagen de entrada pertenece a alguna de las clases que tengo.
+
+El peso sinaptico se guarda en las matrices de convolucion. 
+
+El dropout ayuda a evitar el sobreajuste. 
+
+"""
+
 # ----------------------------------------------------------------
-# PASO 1: Cargar las imágenes de sportsimages
+# PASO 1: Cargar las imágenes
 # ----------------------------------------------------------------
 
-dirname = os.path.join(os.getcwd(), 'CNN_ejemplo\sportimages')
+dirname = os.path.join(os.getcwd(), 'CNN_ejemplo/animals-dataset')
 imgpath = dirname + os.sep
 
 images = []
@@ -113,17 +133,32 @@ print(train_X.shape, valid_X.shape, train_label.shape, valid_label.shape)
 # ----------------------------------------------------------------
 
 INIT_LR = 1e-3
-epochs = 6 # Afinar los pesos sinpticos 
+epochs = 35 # Afinar los pesos sinpticos 
 batch_size = 64  
 
 sport_model = Sequential()
-sport_model.add(Conv2D(32, kernel_size=(3, 3), activation='linear', padding='same', input_shape=(21, 28, 3)))
+
+# Primera capa: 64x64x3 -> 32x32x32
+sport_model.add(Conv2D(32, kernel_size=(3, 3), activation='linear', padding='same', input_shape=(64, 64, 3)))
 sport_model.add(LeakyReLU(alpha=0.1))
 sport_model.add(MaxPooling2D((2, 2), padding='same'))
-sport_model.add(Dropout(0.5))
+sport_model.add(Dropout(0.25))
 
-sport_model.add(Flatten())
-sport_model.add(Dense(32, activation='linear'))
+# Segunda capa: 32x32x32 -> 16x16x64
+sport_model.add(Conv2D(64, kernel_size=(3, 3), activation='linear', padding='same'))
+sport_model.add(LeakyReLU(alpha=0.1))
+sport_model.add(MaxPooling2D((2, 2), padding='same'))
+sport_model.add(Dropout(0.25))
+
+# Tercera capa: 16x16x64 -> 8x8x128
+sport_model.add(Conv2D(128, kernel_size=(3, 3), activation='linear', padding='same'))
+sport_model.add(LeakyReLU(alpha=0.1))
+sport_model.add(MaxPooling2D((2, 2), padding='same'))
+sport_model.add(Dropout(0.25))
+
+# Aplanar y capas densas
+sport_model.add(Flatten())  # 8x8x128 = 8192 valores
+sport_model.add(Dense(128, activation='linear'))
 sport_model.add(LeakyReLU(alpha=0.1))
 sport_model.add(Dropout(0.5))
 sport_model.add(Dense(nClasses, activation='softmax'))
@@ -137,12 +172,20 @@ sport_model.compile(
 )
 
 # Entrenar el modelo
+early_stopping = EarlyStopping(
+    monitor='val_loss',           # Monitorear la pérdida de validación
+    patience=5,                   # Número de épocas sin mejora antes de parar
+    restore_best_weights=True,    # Restaurar los pesos de la mejor época
+    verbose=1
+)
+
 sport_model_train = sport_model.fit(
     train_X, train_label,
     batch_size=batch_size,
     epochs=epochs,
     verbose=1,
-    validation_data=(valid_X, valid_label)
+    validation_data=(valid_X, valid_label),
+    callbacks=[early_stopping]
 )
 
 # Evaluar el modelo en el conjunto de prueba
@@ -151,5 +194,5 @@ print('Test loss:', test_eval[0])
 print('Test accuracy:', test_eval[1])
 
 # Guardar el modelo
-sport_model.save("sports_mnist_2.h5")
-print('\nModelo guardado como sports_mnist_2.h5')
+sport_model.save("recognice_animals.h5")
+print('\nModelo guardado como recognice_animals.h5')
