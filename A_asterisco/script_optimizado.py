@@ -1,7 +1,6 @@
 import pygame
 import math
 from queue import PriorityQueue
-from enum import Enum
 
 # ==================== CONFIGURACIÓN INICIAL ====================
 
@@ -37,11 +36,6 @@ COLORES = {
     'texto_claro': (100, 100, 110),
     'acento': (33, 150, 243)
 }
-
-# Modos de heurística
-class MetodoHeuristica(Enum):
-    MANHATTAN = "Manhattan"
-    EUCLIDIANA = "Euclidiana"
 
 # ==================== CLASE NODO ====================
 
@@ -156,25 +150,18 @@ class Nodo:
 
 # ==================== FUNCIONES DE HEURÍSTICA ====================
 
-def obtener_distancia_heuristica(p1, p2, metodo=MetodoHeuristica.EUCLIDIANA):
+def obtener_distancia_euclidiana(p1, p2):
+    """Calcula la distancia Euclidiana entre dos puntos"""
     x1, y1 = p1
     x2, y2 = p2
-    dx = abs(x1 - x2)
-    dy = abs(y1 - y2)
-    
-    if metodo == MetodoHeuristica.MANHATTAN:
-        return dx + dy
-    elif metodo == MetodoHeuristica.EUCLIDIANA:
-        return math.sqrt(dx**2 + dy**2)
-    
-    return dx + dy  # Default: Manhattan
+    return math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
 
 # ==================== ALGORITMO A* ====================
 
-def buscar_camino_a_estrella(grid, inicio, fin, funcion_dibujar, metodo_heuristica, epsilon=1.0, 
+def buscar_camino_a_estrella(grid, inicio, fin, funcion_dibujar, epsilon=1.0, 
                         mostrar_costos=False, velocidad=1):
     """
-    Implementación optimizada de A* con múltiples heurísticas
+    Implementación optimizada de A* con heurística Euclidiana
     epsilon > 1.0 = Weighted A* (más rápido, menos óptimo)
     epsilon = 1.0 = A* clásico (óptimo)
     """
@@ -183,7 +170,7 @@ def buscar_camino_a_estrella(grid, inicio, fin, funcion_dibujar, metodo_heuristi
     
     # Inicializar nodo inicio
     inicio.costo_g = 0
-    inicio.costo_h = obtener_distancia_heuristica(inicio.obtener_posicion(), fin.obtener_posicion(), metodo_heuristica)
+    inicio.costo_h = obtener_distancia_euclidiana(inicio.obtener_posicion(), fin.obtener_posicion())
     inicio.costo_f = epsilon * inicio.costo_h
     
     cola_abierta.put((inicio.costo_f, contador, inicio))
@@ -213,7 +200,7 @@ def buscar_camino_a_estrella(grid, inicio, fin, funcion_dibujar, metodo_heuristi
                 f"Longitud: {len(camino)} nodos",
                 f"Costo total: {fin.costo_g:.2f}",
                 f"Nodos explorados: {nodos_explorados}",
-                f"Heurística: {metodo_heuristica.value}",
+                f"Heurística: Euclidiana",
                 f"Epsilon: {epsilon}",
                 "",
                 "═══ NODOS DEL CAMINO ═══"
@@ -234,7 +221,7 @@ def buscar_camino_a_estrella(grid, inicio, fin, funcion_dibujar, metodo_heuristi
             if temp_g < vecino.costo_g:
                 vecino.nodo_padre = nodo_actual
                 vecino.costo_g = temp_g
-                vecino.costo_h = obtener_distancia_heuristica(vecino.obtener_posicion(), fin.obtener_posicion(), metodo_heuristica)
+                vecino.costo_h = obtener_distancia_euclidiana(vecino.obtener_posicion(), fin.obtener_posicion())
                 vecino.costo_f = temp_g + epsilon * vecino.costo_h
                 
                 if vecino not in conjunto_abierto:
@@ -300,7 +287,7 @@ def renderizar_lineas_grilla(ventana, grid, filas, offset_x, offset_y, ancho_nod
                         (offset_x + i * ancho_nodo, offset_y + filas * ancho_nodo), 1)
 
 def mostrar_panel_lateral(ventana, ancho_ventana, alto_ventana, info_estado, scroll, 
-                       metodo_heuristica, epsilon, velocidad):
+                       epsilon, velocidad):
     x_panel = ancho_ventana - PANEL_INFO
     pygame.draw.rect(ventana, COLORES['panel'], (x_panel, 0, PANEL_INFO, alto_ventana))
     pygame.draw.line(ventana, COLORES['grid'], (x_panel, 0), (x_panel, alto_ventana), 2)
@@ -320,7 +307,6 @@ def mostrar_panel_lateral(ventana, ancho_ventana, alto_ventana, info_estado, scr
         ("ESPACIO: Iniciar A*", FUENTE_PEQUEÑA, COLORES['texto_claro']),
         ("C: Limpiar grid", FUENTE_PEQUEÑA, COLORES['texto_claro']),
         ("V: Mostrar costos", FUENTE_PEQUEÑA, COLORES['texto_claro']),
-        ("H: Cambiar heurística", FUENTE_PEQUEÑA, COLORES['texto_claro']),
         ("↑/↓: Velocidad", FUENTE_PEQUEÑA, COLORES['texto_claro']),
         ("+/-: Epsilon", FUENTE_PEQUEÑA, COLORES['texto_claro']),
     ]
@@ -338,7 +324,7 @@ def mostrar_panel_lateral(ventana, ancho_ventana, alto_ventana, info_estado, scr
     
     config = [
         ("CONFIGURACIÓN", FUENTE_NORMAL, COLORES['texto']),
-        (f"Heurística: {metodo_heuristica.value}", FUENTE_PEQUEÑA, COLORES['texto_claro']),
+        (f"Heurística: Euclidiana", FUENTE_PEQUEÑA, COLORES['texto_claro']),
         (f"Epsilon: {epsilon:.1f}", FUENTE_PEQUEÑA, COLORES['texto_claro']),
         (f"Velocidad: {velocidad}x", FUENTE_PEQUEÑA, COLORES['texto_claro']),
         (f"Diagonales: Activas", FUENTE_PEQUEÑA, COLORES['texto_claro']),
@@ -412,7 +398,7 @@ def mostrar_panel_lateral(ventana, ancho_ventana, alto_ventana, info_estado, scr
     return 0
 
 def actualizar_ventana(ventana, grid, filas, ancho_ventana, alto_ventana, info_estado, scroll, 
-           metodo_heuristica, epsilon, velocidad, mostrar_costos):
+           epsilon, velocidad, mostrar_costos):
     ventana.fill(COLORES['fondo'])
     
     # Calcular área de juego
@@ -435,7 +421,7 @@ def actualizar_ventana(ventana, grid, filas, ancho_ventana, alto_ventana, info_e
     
     # Dibujar panel
     scroll_max = mostrar_panel_lateral(ventana, ancho_ventana, alto_ventana, info_estado, 
-                                     scroll, metodo_heuristica, epsilon, velocidad)
+                                     scroll, epsilon, velocidad)
     
     pygame.display.update()
     return offset_x, offset_y, ancho_nodo, scroll_max
@@ -459,7 +445,7 @@ def convertir_click_a_posicion(pos, filas, offset_x, offset_y, ancho_nodo):
 # ==================== FUNCIÓN PRINCIPAL ====================
 
 def main():
-    FILAS = 15
+    FILAS = 11
     grid = inicializar_grilla(FILAS, ANCHO_BASE - PANEL_INFO)
     
     inicio = None
@@ -468,10 +454,9 @@ def main():
     scroll = 0
     
     # Configuración
-    metodo_heuristica = MetodoHeuristica.EUCLIDIANA
     epsilon = 1.0
     velocidad = 5
-    mostrar_costos = False
+    mostrar_costos = True
     
     ancho_ventana = ANCHO_BASE
     alto_ventana = ALTO_BASE
@@ -484,7 +469,7 @@ def main():
         
         offset_x, offset_y, ancho_nodo, scroll_max = actualizar_ventana(
             VENTANA, grid, FILAS, ancho_ventana, alto_ventana, 
-            info_estado, scroll, metodo_heuristica, epsilon, velocidad, 
+            info_estado, scroll, epsilon, velocidad, 
             mostrar_costos
         )
         
@@ -542,11 +527,11 @@ def main():
                         nonlocal info_estado
                         info_estado = info
                         actualizar_ventana(VENTANA, grid, FILAS, ancho_ventana, alto_ventana, 
-                               info_estado, scroll, metodo_heuristica, epsilon, velocidad, 
+                               info_estado, scroll, epsilon, velocidad, 
                                costos)
                     
                     resultado = buscar_camino_a_estrella(grid, inicio, fin, wrapper_dibujar, 
-                                                    metodo_heuristica, epsilon, mostrar_costos, 
+                                                    epsilon, mostrar_costos, 
                                                     velocidad)
                     if resultado:
                         info_estado = resultado
@@ -558,12 +543,6 @@ def main():
                     fin = None
                     info_estado = None
                     scroll = 0
-                
-                # Cambiar heurística
-                elif event.key == pygame.K_h:
-                    heuristicas = list(MetodoHeuristica)
-                    idx_actual = heuristicas.index(metodo_heuristica)
-                    metodo_heuristica = heuristicas[(idx_actual + 1) % len(heuristicas)]
                 
                 # Velocidad
                 elif event.key == pygame.K_UP:
