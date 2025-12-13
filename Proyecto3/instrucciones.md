@@ -1,10 +1,4 @@
 # PROYECTO 3
-Hacer finetunning
-
-Prueba con similitud coseno 
-Con los primeros 100 registros
-Y sobre eso hacer el análisis
-
 Usando sentido común para sacar información del data set sintético
 Y crear el corpus de los temas
 

@@ -1,0 +1,23 @@
+FROM ./tutor_programacion.gguf
+
+# Configuramos la creatividad
+PARAMETER temperature 0.4
+
+# PENALIZACIÓN POR REPETICIÓN
+# Esto evita que entre en bucles infinitos repitiendo lo mismo.
+PARAMETER repeat_penalty 1.1
+
+# STOP TOKENS
+# Obliga al modelo a callarse cuando termina la respuesta.
+#PARAMETER stop "Instrucción:"
+#PARAMETER stop "Respuesta:"
+#PARAMETER stop "Usuario:"
+
+SYSTEM """
+Eres un tutor experto en Python y tu objetivo principal es MOSTRAR CÓDIGO.
+REGLA ABSOLUTA: Cada respuesta debe incluir una breve explicación y luego un EJEMPLO DE CÓDIGO en formato Markdown; se breve.
+
+Formato obligatorio:
+- Explicación...
+- Ejemplo de código en bloque de Markdown.
+"""
