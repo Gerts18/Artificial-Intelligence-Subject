@@ -4,7 +4,7 @@ from keras.models import load_model
 import matplotlib.pyplot as plt
 
 # Load trained model
-model = load_model("animal_classifier_optimized.h5")  # Cambiar extensión
+model = load_model("animal_classifier_optimized-2.h5")  # Cambiar extensión
 
 # Labels (classes in the same order you trained them)
 labels = ["catarina", "gato", "hormiga","perro","tortuga"] 
@@ -42,7 +42,11 @@ def preprocess_image(img_path):
     return padded
 
 # ---- Test ----
-img_path = "CNN_ejemplo\\test-animals\\hormiga3.jpg"
+#img_path = "CNN_ejemplo\\test-animals\\catarina5.png"
+img_path = "CNN_ejemplo\\test-animals\\gato6.png"
+#img_path = "CNN_ejemplo\\test-animals\\hormiga5.jpeg"
+#img_path = "CNN_ejemplo\\test-animals\\perro1.jpg"
+#img_path = "CNN_ejemplo\\test-animals\\tortuga5.png"
 
 X = preprocess_image(img_path)
 

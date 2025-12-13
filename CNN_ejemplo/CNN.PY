@@ -134,7 +134,7 @@ print(train_X.shape, valid_X.shape, train_label.shape, valid_label.shape)
 
 INIT_LR = 1e-3
 epochs = 65 # Afinar los pesos sinpticos 
-batch_size = 64  
+batch_size = 32  
 
 sport_model = Sequential([
     # Usar Input como primera capa en lugar de input_shape
@@ -144,7 +144,7 @@ sport_model = Sequential([
     Conv2D(32, kernel_size=(3, 3), activation='linear', padding='same'),
     LeakyReLU(negative_slope=0.1),  # Cambiar alpha por negative_slope
     MaxPooling2D((2, 2), padding='same'),
-    Dropout(0.25),
+    Dropout(0.25), # Apaga ciertas neuronas aleatoriamente para evitar sobreajuste, para evitar que algunos pesos sinapticos dominen el aprendizaje 
 
     # Segunda capa: 32x32x32 -> 16x16x64
     Conv2D(64, kernel_size=(3, 3), activation='linear', padding='same'),
@@ -157,6 +157,7 @@ sport_model = Sequential([
     LeakyReLU(negative_slope=0.1),
     MaxPooling2D((2, 2), padding='same'),
     Dropout(0.25),
+    
 
     # Aplanar y capas densas
     Flatten(),

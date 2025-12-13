@@ -1,7 +1,7 @@
 import os
-import cv2
 import numpy as np
 import matplotlib.pyplot as plt
+import pickle  # Añadir esta importación
 from tensorflow.keras.utils import to_categorical
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Conv2D, MaxPooling2D, Dropout, Flatten, Dense, LeakyReLU
@@ -15,7 +15,7 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 IMG_SIZE = 128 
 CHANNELS = 3
 BATCH_SIZE = 32  # Reducido para manejar mejor la memoria
-EPOCHS = 40
+EPOCHS = 45
 LEARNING_RATE = 0.001
 
 # Ruta al dataset
@@ -49,7 +49,7 @@ train_generator = train_datagen.flow_from_directory(
     subset='training',
     shuffle=True,
     interpolation='bilinear',      # Añadir método de interpolación
-    keep_aspect_ratio=False        # Forzar redimensionamiento exacto
+    keep_aspect_ratio=False        # Forzar redimensionamiento exacto, si es True mantiene proporciones y agrega borde negro
 )
 
 # Cargar datos de validación
@@ -78,30 +78,37 @@ print(f"Imágenes de validación: {validation_generator.samples}")
 # ----------------------------------------------------------------
 model = Sequential()
 
-# --- BLOQUE 1: Características de bajo nivel (Bordes, Colores) ---
+# --- BLOQUE 1: Características de bajo nivel (Bordes, Colores) --- 128
 model.add(Conv2D(32, kernel_size=(3, 3), padding='same', input_shape=(IMG_SIZE, IMG_SIZE, CHANNELS)))
 model.add(LeakyReLU(alpha=0.1)) # Evita neuronas muertas
 model.add(MaxPooling2D((2, 2)))
-model.add(Dropout(0.25)) # Regularización suave
+model.add(Dropout(0.3)) # Regularización suave
 
-# --- BLOQUE 2: Características medias (Texturas, Formas simples) ---
+# --- BLOQUE 2: Características medias (Texturas, Formas simples) --- 64
 model.add(Conv2D(64, (3, 3), padding='same'))
 model.add(LeakyReLU(alpha=0.1))
 model.add(MaxPooling2D((2, 2)))
-model.add(Dropout(0.25))
+model.add(Dropout(0.3))
 
-# --- BLOQUE 3: Características complejas (Partes de animales) ---
+# --- BLOQUE 3: Características complejas (Partes de animales) --- 32
 # Aumentamos filtros a 128 para capturar más complejidad biológica
 model.add(Conv2D(128, (3, 3), padding='same'))
 model.add(LeakyReLU(alpha=0.1))
 model.add(MaxPooling2D((2, 2)))
 model.add(Dropout(0.3))
 
+# --- BLOQUE 4: Características avanzadas (Animales completos) --- 16
+model.add(Conv2D(128, (3, 3), padding='same'))
+model.add(LeakyReLU(alpha=0.1))
+model.add(MaxPooling2D((2, 2)))
+model.add(Dropout(0.3)) 
+
 # --- CLASIFICADOR (Top Model) ---
 model.add(Flatten())
-model.add(Dense(128))
+model.add(Dense(512)) # Capas que tienen conexiones desde cada neurona previa hacia cada neurona actual
 model.add(LeakyReLU(alpha=0.1))
-model.add(Dropout(0.5)) # Regularización fuerte antes de la decisión final
+model.add(Dropout(0.5))  # Regularización fuerte antes de la decisión final 
+model.add(Dense(128))   
 model.add(Dense(nClasses, activation='softmax'))
 
 # Mostrar resumen
@@ -110,10 +117,10 @@ model.summary()
 # ----------------------------------------------------------------
 # PASO 3: Compilación y Entrenamiento con Generadores
 # ----------------------------------------------------------------
-optimizer = Adam(learning_rate=LEARNING_RATE)
+optimizer = Adam(learning_rate=LEARNING_RATE) # Esto es lo que permite a la red saber como agustar los pesos y sesgos durante el entrenamiento de manera eficiente
 
 model.compile(
-    loss='categorical_crossentropy',
+    loss='categorical_crossentropy', 
     optimizer=optimizer,
     metrics=['accuracy']
 )
@@ -129,7 +136,7 @@ reduce_lr = ReduceLROnPlateau(
 
 early_stop = EarlyStopping(
     monitor='val_loss', 
-    patience=5,              # Reducido de 10 a 5 épocas
+    patience=5,              
     min_delta=0.001,         # Mejora mínima requerida
     restore_best_weights=True,
     verbose=1
@@ -138,28 +145,29 @@ early_stop = EarlyStopping(
 print("\nIniciando entrenamiento con generadores...")
 history = model.fit(
     train_generator,
-    steps_per_epoch=train_generator.samples // BATCH_SIZE,
+    steps_per_epoch=len(train_generator), 
     epochs=EPOCHS,
     verbose=1,
     validation_data=validation_generator,
-    validation_steps=validation_generator.samples // BATCH_SIZE,
-    callbacks=[reduce_lr, early_stop]  # Añadir ambos callbacks
+    validation_steps=len(validation_generator), 
+    callbacks=[reduce_lr, early_stop]  
 )
 
-# ----------------------------------------------------------------
-# PASO 4: Evaluación (Opcional - requiere crear test set por separado)
-# ----------------------------------------------------------------
-# Si quieres evaluar en test, debes dividir tu carpeta en train/test manualmente
-# Por ahora, la validación sirve como métrica de rendimiento
 
 print(f"\nMejor precisión en validación: {max(history.history['val_accuracy'])*100:.2f}%")
 
 # ----------------------------------------------------------------
-# PASO 5: Guardado del Modelo
+# PASO 5: Guardado del Modelo y del Historial
 # ----------------------------------------------------------------
-model_filename = "animal_classifier_optimized.h5"
+model_filename = "animal_classifier_optimized-2.h5"
 model.save(model_filename)
 print(f"\nModelo guardado exitosamente como: {model_filename}")
+
+# Guardar el historial de entrenamiento
+history_filename = "training_history.pkl"
+with open(history_filename, 'wb') as f:
+    pickle.dump(history.history, f)
+print(f"Historial guardado como: {history_filename}")
 
 # ----------------------------------------------------------------
 # PASO 6: Visualización de Resultados
@@ -183,5 +191,9 @@ plt.plot(epochs_range, loss, label='Training Loss')
 plt.plot(epochs_range, val_loss, label='Validation Loss')
 plt.legend(loc='upper right')
 plt.title('Training and Validation Loss')
+
+# Guardar la figura antes de mostrarla
+plt.savefig('training_results.png', dpi=300, bbox_inches='tight')
+print(f"\nGráficas guardadas como: training_results.png")
 
 plt.show()
