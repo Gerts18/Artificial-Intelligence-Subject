@@ -10,6 +10,8 @@ El modelo sobre el cual se hizo esta capa extra de entrenamiento fue **deepseek-
 
 El proceso se llevo a cabo en google collab, ya que el equipo que se tenia no contaba con la capacidad suficiente para hacer este tipo de entrenamientos. Collab proporciona un entorno de ejecucion de codigo en linea con recursos limitados gratuitos pero que en este caso fueron suficientes para realizar varios entrenamientos y pruebas para obtener el resultado esperado. 
 
+[Link al collab](https://colab.research.google.com/drive/1n93N3MBeRQsfIiMQ-_ef5qjJZL5uIEph?usp=sharing)
+
 Los pasos que se llevaron a cabo:
 
 - Instalacion de paquetes necesarios
