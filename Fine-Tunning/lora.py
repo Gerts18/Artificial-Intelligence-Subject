@@ -4,6 +4,8 @@ from transformers import AutoModelForCausalLM, AutoTokenizer, DataCollatorForLan
 from peft import LoraConfig, get_peft_model
 from transformers import TrainingArguments, Trainer
 
+# Low Rank Adaptation (LoRA) para ajuste fino eficiente de modelos de lenguaje grandes
+
 # -----------------------------
 # 1. Cargar dataset
 # -----------------------------
