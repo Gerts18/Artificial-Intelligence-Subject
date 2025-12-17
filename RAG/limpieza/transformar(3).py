@@ -3,8 +3,8 @@ import os
 
 # --- CONFIGURACIÓN ---
 # Cambia esto por el nombre real de tu archivo
-INPUT_FILE = 'RAG//limpieza//dataset_limpio_tweets.csv' 
-OUTPUT_FILE = 'corpus_narrativo_tweets.txt'
+INPUT_FILE = 'RAG//limpieza//dataset_limpio.csv' 
+OUTPUT_FILE = 'corpus_narrativo_tweets_sinteticos.txt'
 
 def crear_narrativa(row):
     """
@@ -21,17 +21,17 @@ def crear_narrativa(row):
     repost = row.get('reposts', 0)
     
     # Para dataset de tweets
-    tipo = row.get('tipo', 'tweet')
+    #tipo = row.get('tipo', 'tweet')
     
     # Construcción de la narrativa semántica
     # NOTA: Repetimos palabras clave como "tema", "sentimiento" y "contenido" 
     # para reforzar la asociación en el espacio vectorial.
     narrativa = (
-        f"## Registro Tweets - ID: {row.get('id', 'N/A')}\n"
+        f"## Registro Tweets - ID: {row.get('id', 'N/A') + 200}\n"
         f"Fecha {fecha}, Usuario:'{usuario}' "
         f"Tema **{tema}**.\n"
         f"Sentimiento detectado: **{sentimiento}**.\n\n"
-        f"Contenido {tipo}:\n"
+        #f"Contenido {tipo}:\n"
         f"\"{texto}\"\n\n"
         f"Generó {likes} reacciones (likes) "
         f"compartida (repost) {repost} veces.\n"

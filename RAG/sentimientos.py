@@ -4,6 +4,8 @@ from transformers import pipeline
 import warnings
 warnings.filterwarnings('ignore')
 
+# Este script analiza el sentimiento de tweets en español usando un modelo preentrenado de Hugging Face 
+
 # Ruta del archivo
 archivo_entrada = r'RAG//recoleccion//tweets.csv.xlsx'
 archivo_salida = r'RAG//limpieza//tweets_con_sentimientos.xlsx'
