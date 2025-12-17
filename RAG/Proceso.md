@@ -35,7 +35,7 @@ En el workspace se le paso un prompt (*prompt.md*) el cual ayuda a guiar al mode
 
 Una vez hecha esta configuracion se le pasaron los dataset y pdfs seleccionados para hacer el embedding y se procedio a hacer una pregunta inicial, la cual fue respondida con el contexto proporcionado y el seguimiento deseado, por lo cual se puede decir que el RAG funciona correctamente. 
 
-![imagen ejemplo](RAG\images\1.png)
+![Response](./images/1.png)
 
 # Respuestas a preguntas 
 
